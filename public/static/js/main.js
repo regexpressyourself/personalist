@@ -85,13 +85,15 @@ let updateInitialView = () => {
 let updatePlaylistSongsView = (data) => {
   let items = [`<button onclick="getUserPlaylists('${state.user}')">Back</button>`];
   for (let song of data) {
+    console.log(song);
     let newData = {
       // the special id for playlist+song combination. 
       // this is the key in the db for the song. the value is the description
       "messinaID": song.messinaId,
       "description": song.description
     }
-    items.push(`<p><a href="#" target="_blank">${song.name}</a></p>
+    items.push(`<p class="clickable" onclick="playSong('${song.id}')">${song.name}</p>
+    <div id="embed-${song.id}"></div>
                 <label for="song-${song.messinaId}">description</label>
                 <input type="text" value="${song.description}" name="song-${song.messinaId}" id="song-${song.messinaId}"/>
                 <button onclick="setPlaylistSongs('${song.messinaId}', document.getElementById('song-${song.messinaId}').value)">Submit yo' shit</button>
@@ -112,3 +114,9 @@ let updateMainView = (content) => {
   mainSection.innerHTML = content;
 }
 
+let playSong = (songId) => {
+  let iframe = `<iframe src="https://open.spotify.com/embed/track/${songId}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
+  let embedSection = document.querySelectorAll(`#embed-${songId}`)[0];
+  embedSection.innerHTML = iframe;
+
+}

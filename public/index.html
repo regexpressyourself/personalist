@@ -28,6 +28,13 @@
     </section>
     <footer></footer>
 
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+
+  <script>
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      // You can now initialize Spotify.Player and use the SDK
+    };
+  </script>
     <script async src="/js/min/main.min.js"></script>
     <script async defer src="https://www.googletagmanager.com/gtag/js?id=TODO gtag ID"></script>
   </body>
