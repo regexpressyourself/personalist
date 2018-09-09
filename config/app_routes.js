@@ -1,143 +1,87 @@
-/*
- * This is really where the magic happens.
- * Static asset routes can be declared based on the url request. 
- * This way, we can point to build directories in sub-projects 
- * easily.
- */
-
 const path = require('path');
 const express = require('express');
 const request = require("request");
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+var SpotifyWebApi = require('spotify-web-api-node');
+const adapter = new FileSync('db.json')
+const db = low(adapter)
 
-// Primary app routes - all the pages to render directly
-const routes = [
-  {
-    home: '../public/index.html',
-    route: '/',
-    statics: [
-      { from: '/',
-        to: 'public' },
-      { from: '/images',
-        to: 'public/images' }
-    ]
+db.defaults({ playlistsongs: {} }).write()
+
+var spotifyApi = new SpotifyWebApi({
+  clientId: '9e86013c99c74130935c09f827ab9cf4',
+  clientSecret: 'c4e6904f57964fb3a9c52fe83d2fac65',
+  redirectUri: '/'
+});
+
+spotifyApi.clientCredentialsGrant().then(
+  function(data) {
+    console.log('The access token expires in ' + data.body['expires_in']);
+    console.log('The access token is ' + data.body['access_token']);
+
+    spotifyApi.setAccessToken(data.body['access_token']);
   },
-  {
-    home: '../projects/Q-Programming-Language/index.html',
-    route: '/Q-Programming-Language',
-    statics: [
-      { from: '/Q-Programming-Language', 
-        to: 'projects/Q-Programming-Language' },
-      { from: '/reveal.js', 
-        to: 'projects/Q-Programming-Language/reveal.js' }
-    ]
-  },
-  {
-    home: '../projects/Nabbar-Nav/example_create-react-app/build/index.html',
-    route: 'nabbar-demo',
-    statics: [
-      { from: '/static/', 
-        to: 'projects/Nabbar-Nav/example_create-react-app/build/static' }
-    ]
-  },
-  {
-    home: '../projects/PracticeBuddy/build/index.html',
-    route: '/practicebuddy',
-    statics: [
-      { from: '/practicebuddy', 
-        to: 'projects/PracticeBuddy/build' },
-      { from: '/static', 
-        to: 'projects/PracticeBuddy/build/static' }
-    ]
-  },
-  {
-    home: '../projects/seo_pres/index.html',
-    route: '/seo',
-    statics: [
-      { from: '/seo', 
-        to: 'projects/seo_pres' },
-      { from: '/lib', 
-        to: 'projects/seo_pres/lib' },
-      { from: '/plugin', 
-        to: 'projects/seo_pres/plugin' },
-      { from: '/css', 
-        to: 'projects/seo_pres/css' },
-      { from: '/js', 
-        to: 'projects/seo_pres/js' }
-    ]
-  },
-  {
-    home: '../projects/Iframer/index.html',
-    route: 'iframer',
-    statics: [
-      { from: '/iframer', 
-        to: 'projects/Iframer' }
-    ]
-  },
-  {
-    home: '../projects/gitflow/index.html',
-    route: '/gitflow',
-    statics: [
-      { from: '/', 
-        to: 'projects/gitflow' },
-      { from: '/gitflow', 
-        to: 'projects/gitflow' },
-      { from: '/images',
-        to: 'public/images' }
-    ]
-  },
-  {
-    home: '../projects/Turbo-Pup-Site/index.html',
-    route: '/Turbo-Pup-Site',
-    statics: [
-      { from: '/Turbo-Pup-Site', 
-        to: 'projects/Turbo-Pup-Site' },
-      { from: '/', 
-        to: 'projects/Turbo-Pup-Site' }
-    ]
-  },
-  {
-    home: '../projects/twitch-tracker/index.html',
-    route: '/twitch-tracker',
-    statics: [
-      { from: '/', 
-        to: 'projects/twitch-tracker' }
-    ]
+  function(err) {
+    console.log(
+      'Something went wrong when retrieving an access token',
+      err.message
+    );
   }
-];
+);
 
 module.exports = (app) => {
-  for (let route of routes) {
-    app.get(route.route, (req, res) => {
-      for (let dirs of route.statics) {
-        app.use(dirs.from, express.static(dirs.to));
-      }
-      res.sendFile(path.join(__dirname, route.home));
-    });
 
-  }
-
-try {
-  // request block for my twitch viewer tracker
-  app.get('/get_viewers', (req, res) => {
-    let username = "sscait"
-    if (req.query && req.query["username"] && req.query["username"].length > 0) {
-        username = req.query["username"]
-    }
-    response = request.get("https://tmi.twitch.tv/group/user/"+username+"/chatters", (er, resp, bod) => {
-	if (er || !bod) {return;}
-      let result;
-      try {
-        result = JSON.parse(bod);
-      }
-      catch(error) {
-        return;
-      }
-      res.send(result);
+  app.get('/playlists', (req, res) => {
+    spotifyApi.getUserPlaylists(req.query.userId, {}, (err, data) => {
+      res.send(JSON.stringify(data.body));
     });
   });
-}
-catch(er) {
-};
+
+  app.get('/playlist', (req, res) => {
+    let songList = {items: []};
+
+    spotifyApi.getPlaylistTracks(req.query.userId, req.query.playlistId, {}, (err, data) => {
+
+      let i = 0;
+      for (let song of data.body.items) {
+
+        song = song.track;
+        let id = req.query.playlistId + song.id;
+        let dbValue = db.get(id).value();
+
+        if (typeof dbValue === 'undefined') {
+          song['description'] = '';
+          db.set(id, song['description']).write();
+        }
+        else {
+          song['description'] = dbValue;
+        }
+
+        song['messinaId'] = id;
+        songList.items.push(song);
+      }
+
+      res.send(JSON.stringify(songList));
+
+    });
+  });
+
+
+  app.post('/playlist', (req, res) => {
+    let songs = req.body.payload;
+    for (let song of songs) {
+      db.set(song['id'], song['description']).write();
+    }
+  });
+
+  app.get('/', (req, res) => {
+    app.use('/', express.static('public'));
+    app.use('/images', express.static('public/static/images'));
+    app.use('/css', express.static('public/static/css'));
+    app.use('/js', express.static('public/static/js'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  });
 
 };
 
