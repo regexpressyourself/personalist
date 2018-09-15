@@ -33,7 +33,7 @@ spotifyApi.clientCredentialsGrant().then(
 module.exports = (app) => {
 
   app.get('/playlists', (req, res) => {
-    spotifyApi.getUserPlaylists(req.query.userId, {}, (err, data) => {
+    spotifyApi.getUserPlaylists(req.query.user, {}, (err, data) => {
       res.send(JSON.stringify(data.body));
     });
   });
@@ -41,13 +41,13 @@ module.exports = (app) => {
   app.get('/playlist', (req, res) => {
     let songList = {items: []};
 
-    spotifyApi.getPlaylistTracks(req.query.userId, req.query.playlistId, {}, (err, data) => {
-
+    spotifyApi.getPlaylistTracks(req.query.user, req.query.list, {}, (err, data) => {
+      if (data == undefined) {return;}
       let i = 0;
       for (let song of data.body.items) {
 
         song = song.track;
-        let id = req.query.playlistId + song.id;
+        let id = req.query.list + song.id;
         let dbValue = db.get(id).value();
 
         if (typeof dbValue === 'undefined') {
@@ -76,6 +76,20 @@ module.exports = (app) => {
   });
 
   app.get('/', (req, res) => {
+    app.use('/', express.static('public'));
+    app.use('/images', express.static('public/static/images'));
+    app.use('/css', express.static('public/static/css'));
+    app.use('/js', express.static('public/static/js'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  });
+  app.get('/lists', (req, res) => {
+    app.use('/', express.static('public'));
+    app.use('/images', express.static('public/static/images'));
+    app.use('/css', express.static('public/static/css'));
+    app.use('/js', express.static('public/static/js'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  });
+  app.get('/songs', (req, res) => {
     app.use('/', express.static('public'));
     app.use('/images', express.static('public/static/images'));
     app.use('/css', express.static('public/static/css'));

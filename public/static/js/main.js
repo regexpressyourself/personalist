@@ -1,7 +1,8 @@
 let state = {
   user: '',
-  playlist: ''
+  list: ''
 }
+
 
 function httpGetAsync(theUrl, callback) { //theURL or a path to file
   var httpRequest = new XMLHttpRequest();
@@ -53,53 +54,53 @@ let getUserPlaylists = (user) => {
       break
   }
   state.user = user;
-  httpGetAsync(`/playlists?userId=${user}`, function(data) {
-    updateUserPlaylistsView(JSON.parse(data).items);
-  });
+  updateUserPlaylistsView();
 }
 
-let updateUserPlaylistsView = (data) => {
-  let items = [`<button onclick="updateInitialView()">Back</button>`];
-  for (let playlist of data) {
-    items.push(`<p class="clickable" onclick="getPlaylistSongs('${playlist.id}')">${playlist.name}</p>`);
-  }
-  updateMainView(items.join(''));
-}
+let updateUserPlaylistsView = () => {
+  httpGetAsync(`/playlists?user=${state.user}`, function(data) {
+    let items = [];
+    data = JSON.parse(data).items;
 
-
-let getPlaylistSongs = (playlistId) => {
-  state.playlist = playlistId;
-
-  httpGetAsync(`/playlist?userId=${state.user}&playlistId=${playlistId}`, function(data) {
-    updatePlaylistSongsView(JSON.parse(data).items);
+    for (let playlist of data) {
+      items.push(`<p><a href="/songs?user=${state.user}&list=${playlist.id}" >${playlist.name}</a></p>`);
+    }
+    updateMainView(items.join(''));
   });
 }
 
 let updateInitialView = () => {
   updateMainView(`
-       <button onclick="getUserPlaylists('sam')">Sam</button>
-       <button onclick="getUserPlaylists('kendall')">Kendall</button>
+      <a href="/lists?user=${sam_user}" >
+       <button>Sam</button>
+     </a>
+     <br />
+      <a href="/lists?user=${kendall_user}" >
+       <button>Kendall</button>
+     </a>
   `);
 }
 
-let updatePlaylistSongsView = (data) => {
-  let items = [`<button onclick="getUserPlaylists('${state.user}')">Back</button>`];
-  for (let song of data) {
-    console.log(song);
-    let newData = {
-      // the special id for playlist+song combination. 
-      // this is the key in the db for the song. the value is the description
-      "messinaID": song.messinaId,
-      "description": song.description
-    }
-    items.push(`<p class="clickable" onclick="playSong('${song.id}')">${song.name}</p>
+let updatePlaylistSongsView = () => {
+  httpGetAsync(`/playlist?user=${state.user}&list=${state.list}`, function(data) {
+    let items = [];
+    data = JSON.parse(data);
+    for (let song of data['items']) {
+      let newData = {
+        // the special id for playlist+song combination. 
+        // this is the key in the db for the song. the value is the description
+        "messinaID": song.messinaId,
+        "description": song.description
+      }
+      items.push(`<p class="clickable" onclick="playSong('${song.id}')">${song.name}</p>
     <div id="embed-${song.id}"></div>
                 <label for="song-${song.messinaId}">description</label>
                 <input type="text" value="${song.description}" name="song-${song.messinaId}" id="song-${song.messinaId}"/>
                 <button onclick="setPlaylistSongs('${song.messinaId}', document.getElementById('song-${song.messinaId}').value)">Submit yo' shit</button>
       `);
-  }
-  updateMainView(items.join(''));
+    }
+    updateMainView(items.join(''));
+  });
 }
 
 let setPlaylistSongs = (id, description) => {
@@ -120,3 +121,39 @@ let playSong = (songId) => {
   embedSection.innerHTML = iframe;
 
 }
+
+
+
+
+
+function findGetParameter(parameterName) {
+  var result = null,
+    tmp = [];
+  location.search
+    .substr(1)
+    .split("&")
+    .forEach(function (item) {
+      tmp = item.split("=");
+      if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+    });
+  return result;
+}
+
+(() => {
+  switch (window.location.pathname) {
+    case '/':
+      //updateInitialView();
+      break;
+    case '/lists':
+      state.user = findGetParameter('user');
+      updateUserPlaylistsView();
+      break;
+    case '/songs':
+      state.user = findGetParameter('user');
+      state.list = findGetParameter('list');
+      updatePlaylistSongsView();
+      break;
+    default:
+      break;
+  }
+})()
