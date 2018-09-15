@@ -6,37 +6,50 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <link rel="canonical" href="TODO canonical link">
     <link rel="icon" href="./static/images/favicon.ico" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css?family=Acme|Montserrat" rel="stylesheet">
 
-    <title>TODO Title</title>
+    <title>personaList | Personalize Your Spotify Playlists</title>
 
-    <meta name="description" content="TODO meta description">
+    <meta name="description" content="personaList | Personalize Your Spotify Playlists">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="/css/min/main.css">
   </head>
+
   <body>
     <section>
+      <header>
+        <h1>personaList</h1>
+      </header>
       <main id="main">
-      <h1>Personalist</h1>
-      <a href="/lists?user=smessina" >
-        <button>Sam</button>
-      </a>
-      <br />
-      <a href="/lists?user=kwatch90210" >
-        <button>Kendall</button>
-      </a>
+      <!--<input type="text" value="" placeholder="Spotify Username" name="user" id="user"/>-->
+      <div class="btn-container">
+        <a class="btn"  href="/lists?user=smessina" >
+          Sam
+        </a>
+          <br />
+          <a class="btn" href="/lists?user=kwatch90210" >
+            Kendall
+          </a>
+      </div>
+
+    <div class="bands">
+      <p></p>
+      <p></p>
+      <p></p>
+    </div>
       </main>
     </section>
     <footer></footer>
 
     <script src="https://sdk.scdn.co/spotify-player.js"></script>
 
-  <script>
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      // You can now initialize Spotify.Player and use the SDK
-    };
-  </script>
+    <script>
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        // You can now initialize Spotify.Player and use the SDK
+      };
+    </script>
     <script async src="/js/min/main.min.js"></script>
     <script async defer src="https://www.googletagmanager.com/gtag/js?id=TODO gtag ID"></script>
   </body>

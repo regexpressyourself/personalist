@@ -92,11 +92,16 @@ let updatePlaylistSongsView = () => {
         "messinaID": song.messinaId,
         "description": song.description
       }
-      items.push(`<p class="clickable" onclick="playSong('${song.id}')">${song.name}</p>
+      items.push(`
+    <div>
+      <p class="clickable" onclick="playSong('${song.id}')">${song.name}</p>
+    <div>
     <div id="embed-${song.id}"></div>
                 <label for="song-${song.messinaId}">description</label>
                 <input type="text" value="${song.description}" name="song-${song.messinaId}" id="song-${song.messinaId}"/>
                 <button onclick="setPlaylistSongs('${song.messinaId}', document.getElementById('song-${song.messinaId}').value)">Submit yo' shit</button>
+    </div>
+    </div>
       `);
     }
     updateMainView(items.join(''));
@@ -142,13 +147,16 @@ function findGetParameter(parameterName) {
 (() => {
   switch (window.location.pathname) {
     case '/':
+      document.querySelectorAll('body')[0].id = 'home';
       //updateInitialView();
       break;
     case '/lists':
+      document.querySelectorAll('body')[0].id = 'lists';
       state.user = findGetParameter('user');
       updateUserPlaylistsView();
       break;
     case '/songs':
+      document.querySelectorAll('body')[0].id = 'songs';
       state.user = findGetParameter('user');
       state.list = findGetParameter('list');
       updatePlaylistSongsView();
@@ -156,4 +164,5 @@ function findGetParameter(parameterName) {
     default:
       break;
   }
+
 })()

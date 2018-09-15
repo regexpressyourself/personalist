@@ -1,0 +1,56 @@
+#lists {
+  background-color: $offwhite;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 18px;
+  font-weight: 200;
+
+  header {
+    color: $orange;
+    font-family: 'Acme', sans-serif;
+    font-size: 36px;
+    padding: 0 2%;
+    height: 70px;
+    display: flex;
+    align-items: center;
+  }
+  #main {
+    padding: 0 2%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 10px;
+      background-color: $teal;
+      height: calc(100% - 70px);
+    }
+
+    p > a{
+      text-decoration: none;
+      color: #333;
+    }
+    p {
+      width: 40%;
+    }
+
+    p:nth-child(odd) {
+      a {
+        float: right;
+        &::after {
+          content: "  >";
+        }
+      }
+      margin-left: -45%;
+    }
+    p:nth-child(even) {
+      a {
+        &::before {
+          content: "<  ";
+        }
+      }
+      margin-right: -45%;
+    }
+  }
+}

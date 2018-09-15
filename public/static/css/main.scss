@@ -1,3 +1,11 @@
+@import 'base/reset';
+@import 'base/colors';
+@import 'base/defaults';
+
+@import 'pages/home';
+@import 'pages/lists';
+@import 'pages/songs';
+
 .clickable {
   &:hover {
     cursor: pointer;
