@@ -1,18 +1,9 @@
 #lists {
-  background-color: $offwhite;
   font-family: 'Montserrat', sans-serif;
   font-size: 18px;
+  font-size: calc(16px + 6 * ((100vw - 320px) / 680));
   font-weight: 200;
 
-  header {
-    color: $orange;
-    font-family: 'Acme', sans-serif;
-    font-size: 36px;
-    padding: 0 2%;
-    height: 70px;
-    display: flex;
-    align-items: center;
-  }
   #main {
     padding: 0 2%;
     display: flex;
@@ -21,36 +12,81 @@
 
     &::before {
       content: "";
-      position: absolute;
+      position: fixed;
       width: 10px;
       background-color: $teal;
-      height: calc(100% - 70px);
+      height: 100%;
+      top: 0;
+      z-index: -1;
     }
 
-    p > a{
-      text-decoration: none;
-      color: #333;
-    }
-    p {
+
+    .playlist {
       width: 40%;
+      display: flex;
+      align-items: center;
     }
 
-    p:nth-child(odd) {
-      a {
-        float: right;
-        &::after {
-          content: "  >";
-        }
-      }
+    .playlist--odd {
+      flex-direction: row-reverse;
       margin-left: -45%;
     }
-    p:nth-child(even) {
-      a {
-        &::before {
-          content: "<  ";
-        }
-      }
+
+    .playlist--even {
       margin-right: -45%;
+    }
+
+
+    .playlist__link {
+      text-decoration: none;
+      color: #333;
+      background-color: $yellow;
+      padding: 7px 10px;
+      width: 90%;
+      word-wrap: break-word;
+      hyphens: auto;
+      box-shadow: 0 2px 2px 0 rgba(0,0,0,0.16),0 0 0 1px rgba(0,0,0,0.08);
+      transition: box-shadow .3s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 10vh;
+      &:hover {
+        box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2),0 0 0 1px rgba(0,0,0,0.08);
+      }
+      span {
+        width: 100%;
+      }
+    }
+
+    .playlist__link--even {
+      border-left: 8px solid $orange;
+      border-radius: 0 5px 5px 0;
+    }
+
+    .playlist__link--odd {
+      border-right: 8px solid $orange;
+      text-align: right;
+      border-radius: 5px 0 0 5px;
+    }
+
+    .playlist__pointer {
+      border-top: 3px solid $orange;
+      width: 10%;
+
+      &::after,
+      &::before {
+        color: $orange;
+        font-weight: 800;
+      }
+    }
+
+    .playlist__pointer--odd {
+      float: right;
+      margin-right: -4%;
+    }
+    .playlist__pointer--even {
+      margin-left: -4%;
     }
   }
 }

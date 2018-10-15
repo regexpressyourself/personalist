@@ -34,7 +34,9 @@ module.exports = (app) => {
 
   app.get('/playlists', (req, res) => {
     spotifyApi.getUserPlaylists(req.query.user, {}, (err, data) => {
-      res.send(JSON.stringify(data.body));
+      if (data !== undefined) {
+        res.send(JSON.stringify(data.body));
+      }
     });
   });
 

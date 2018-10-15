@@ -62,8 +62,18 @@ let updateUserPlaylistsView = () => {
     let items = [];
     data = JSON.parse(data).items;
 
-    for (let playlist of data) {
-      items.push(`<p><a href="/songs?user=${state.user}&list=${playlist.id}" >${playlist.name}</a></p>`);
+    for (let i = 0; i < data.length; i++) {
+      let playlist = data[i];
+      let oddEvenModifier = (i % 2 === 0) ? 'odd' : 'even';
+      items.push(`<p class="playlist playlist--${oddEvenModifier}">
+                    <span class="playlist__pointer playlist__pointer--${oddEvenModifier}"></span>
+                    <a class="playlist__link playlist__link--${oddEvenModifier}" href="/songs?user=${state.user}&list=${playlist.id}" >
+                      <span>
+                        ${playlist.name}
+                      </span>
+                    </a>
+                  </p>
+                `);
     }
     updateMainView(items.join(''));
   });
@@ -71,13 +81,20 @@ let updateUserPlaylistsView = () => {
 
 let updateInitialView = () => {
   updateMainView(`
-      <a href="/lists?user=${sam_user}" >
-       <button>Sam</button>
-     </a>
-     <br />
-      <a href="/lists?user=${kendall_user}" >
-       <button>Kendall</button>
-     </a>
+      <div class="btn-container">
+        <a class="btn"  href="/lists?user=smessina" >
+          Sam
+        </a>
+          <br />
+          <a class="btn" href="/lists?user=kwatch90210" >
+            Kendall
+          </a>
+      </div>
+    <div class="bands">
+      <p></p>
+      <p></p>
+      <p></p>
+    </div>
   `);
 }
 
@@ -93,23 +110,36 @@ let updatePlaylistSongsView = () => {
         "description": song.description
       }
       items.push(`
-    <div>
-      <p class="clickable" onclick="playSong('${song.id}')">${song.name}</p>
-    <div>
-    <div id="embed-${song.id}"></div>
-                <label for="song-${song.messinaId}">description</label>
-                <input type="text" value="${song.description}" name="song-${song.messinaId}" id="song-${song.messinaId}"/>
-                <button onclick="setPlaylistSongs('${song.messinaId}', document.getElementById('song-${song.messinaId}').value)">Submit yo' shit</button>
-    </div>
-    </div>
+      <div class="song-item song-item--${song.id}">
+        <p onclick="toggleDescription(event, '${song.id}')" class="song-item__name song-item__name--${song.id} clickable">
+          <span>
+            ${song.name}
+          </span>
+          <span id="play-icon--${song.id}" class="song-item__name__play" onclick="playSong('${song.id}')">
+            <svg id="play-icon-${song.id}" class="feather feather-play sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-reactid="916"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          </span>
+        </p>
+        <div class="song-item__description song-item__description--${song.id}">
+          <textarea type="text" 
+                    placeholder="Description" 
+                    name="song-${song.messinaId}" 
+                    id="song-${song.messinaId}">${song.description}</textarea>
+          <div class="song-item__description__btn-container">
+            <button class="clickable" onclick="setPlaylistSongs('${song.messinaId}')">Save</button>
+            <button class="clickable" onclick="toggleDescription(event, '${song.id}')">Cancel</button>
+          </div>
+        </div>
+      </div>
       `);
     }
+    items.push('<div id="embed-player"></div>');
     updateMainView(items.join(''));
   });
 }
 
-let setPlaylistSongs = (id, description) => {
-  let payload = [{ 'id': id, 'description': description }];
+let setPlaylistSongs = (id) => {
+  let newDescription = document.getElementById(`song-${id}`).value;
+  let payload = [{ 'id': id, 'description': newDescription }];
 
   httpPostAsync('/playlist', payload, (data) => { 
   });
@@ -120,16 +150,42 @@ let updateMainView = (content) => {
   mainSection.innerHTML = content;
 }
 
-let playSong = (songId) => {
-  let iframe = `<iframe src="https://open.spotify.com/embed/track/${songId}" width="300" height="380" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`
-  let embedSection = document.querySelectorAll(`#embed-${songId}`)[0];
-  embedSection.innerHTML = iframe;
-
+let toggleDescription = (event, songId) => {
+	if (event.target.closest('.song-item__name__play')) return;
+  let songEl = document.querySelectorAll(`.song-item--${songId}`)[0];
+  if (songEl.classList.contains('song-item--shown')) {
+    songEl.classList.add('song-item--hidden');
+    songEl.classList.remove('song-item--shown');
+  }
+  else {
+    songEl.classList.add('song-item--shown');
+    songEl.classList.remove('song-item--hidden');
+  }
 }
 
+let playSong = (songId) => {
+  document.querySelectorAll(`#embed-player`)[0].innerHTML = `<iframe src="https://open.spotify.com/embed/track/${songId}" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`;
+  document.querySelectorAll(`#play-icon--${songId}`)[0].style.opacity = 0;
+  setTimeout(() => {
+  document.querySelectorAll(`#play-icon--${songId}`)[0].innerHTML = `
+            <svg id="pause-icon-${songId}" class="feather feather-pause sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-reactid="861"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+  `;
+  document.querySelectorAll(`#play-icon--${songId}`)[0].onclick = () => pauseSong(songId);
+  document.querySelectorAll(`#play-icon--${songId}`)[0].style.opacity = 1;
+  }, 500);
+}
 
-
-
+let pauseSong = (songId) => {
+  player.pause();
+  document.querySelectorAll(`#play-icon--${songId}`)[0].style.opacity = 0;
+  setTimeout(() => {
+    document.querySelectorAll(`#play-icon--${songId}`)[0].innerHTML = `
+            <svg id="play-icon-${songId}" class="feather feather-play sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-reactid="916"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+  `;
+    document.querySelectorAll(`#play-icon--${songId}`)[0].onclick = () => playSong(songId);
+    document.querySelectorAll(`#play-icon--${songId}`)[0].style.opacity = 1;
+  }, 500);
+}
 
 function findGetParameter(parameterName) {
   var result = null,
@@ -148,7 +204,7 @@ function findGetParameter(parameterName) {
   switch (window.location.pathname) {
     case '/':
       document.querySelectorAll('body')[0].id = 'home';
-      //updateInitialView();
+      updateInitialView();
       break;
     case '/lists':
       document.querySelectorAll('body')[0].id = 'lists';
