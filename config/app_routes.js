@@ -9,26 +9,27 @@ const db = low(adapter)
 
 db.defaults({ playlistsongs: {} }).write()
 
-var spotifyApi = new SpotifyWebApi({
-  clientId: '9e86013c99c74130935c09f827ab9cf4',
-  clientSecret: 'c4e6904f57964fb3a9c52fe83d2fac65',
-  redirectUri: '/'
-});
 
-spotifyApi.clientCredentialsGrant().then(
-  function(data) {
-    console.log('The access token expires in ' + data.body['expires_in']);
-    console.log('The access token is ' + data.body['access_token']);
+let getCreds = () => { 
+  var spotifyApi = new SpotifyWebApi({
+    clientId: '9e86013c99c74130935c09f827ab9cf4',
+    clientSecret: 'c4e6904f57964fb3a9c52fe83d2fac65',
+    redirectUri: '/'
+  });
+  spotifyApi.clientCredentialsGrant().then(
+    function(data) {
+      console.log('The access token expires in ' + data.body['expires_in']);
+      console.log('The access token is ' + data.body['access_token']);
 
-    spotifyApi.setAccessToken(data.body['access_token']);
-  },
-  function(err) {
-    console.log(
-      'Something went wrong when retrieving an access token',
-      err.message
-    );
-  }
-);
+      spotifyApi.setAccessToken(data.body['access_token']);
+    },
+    function(err) {
+      console.log(err);
+    }
+  );
+}
+
+getCreds();
 
 module.exports = (app) => {
 
@@ -36,6 +37,10 @@ module.exports = (app) => {
     spotifyApi.getUserPlaylists(req.query.user, {}, (err, data) => {
       if (data !== undefined) {
         res.send(JSON.stringify(data.body));
+      }
+      else if (err) {
+        getCreds();
+        console.log(err);
       }
     });
   });
