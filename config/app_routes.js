@@ -10,8 +10,9 @@ const db = low(adapter)
 db.defaults({ playlistsongs: {} }).write()
 
 
+let spotifyApi;
 let getCreds = () => { 
-  var spotifyApi = new SpotifyWebApi({
+  spotifyApi = new SpotifyWebApi({
     clientId: '9e86013c99c74130935c09f827ab9cf4',
     clientSecret: 'c4e6904f57964fb3a9c52fe83d2fac65',
     redirectUri: '/'
