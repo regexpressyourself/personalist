@@ -59,6 +59,7 @@ let getUserPlaylists = (user) => {
 
 let updateUserPlaylistsView = () => {
   httpGetAsync(`/playlists?user=${state.user}`, function(data) {
+    if (data === 'try again') {updateUserPlaylistsView();}
     let items = [];
     data = JSON.parse(data).items;
 
@@ -125,8 +126,8 @@ let updatePlaylistSongsView = () => {
                     name="song-${song.messinaId}" 
                     id="song-${song.messinaId}">${song.description}</textarea>
           <div class="song-item__description__btn-container">
-            <button class="clickable" onclick="setPlaylistSongs('${song.messinaId}')">Save</button>
-            <button class="clickable" onclick="toggleDescription(event, '${song.id}')">Cancel</button>
+            <button id="save-btn-${song.messinaId}" class="save-btn clickable" onclick="setPlaylistSongs('${song.messinaId}')">Save</button>
+            <button id="cancel-btn-${song.messinaId}" class="cancel-btn clickable" onclick="toggleDescription(event, '${song.id}')">Cancel</button>
           </div>
         </div>
       </div>
@@ -138,10 +139,18 @@ let updatePlaylistSongsView = () => {
 }
 
 let setPlaylistSongs = (id) => {
+  let saveBtn = document.getElementById(`save-btn-${id}`);
+  let cancelBtn = document.getElementById(`cancel-btn-${id}`);
   let newDescription = document.getElementById(`song-${id}`).value;
   let payload = [{ 'id': id, 'description': newDescription }];
 
   httpPostAsync('/playlist', payload, (data) => { 
+    saveBtn.classList.add('animorph');
+    cancelBtn.classList.add('animorph');
+    setTimeout(() => {
+      saveBtn.classList.remove('animorph');
+      cancelBtn.classList.remove('animorph');
+    }, 2000);
   });
 }
 

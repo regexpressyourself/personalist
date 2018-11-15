@@ -31,6 +31,7 @@ let getCreds = () => {
 }
 
 getCreds();
+let errCount = 0;
 
 module.exports = (app) => {
 
@@ -38,10 +39,17 @@ module.exports = (app) => {
     spotifyApi.getUserPlaylists(req.query.user, {}, (err, data) => {
       if (data !== undefined) {
         res.send(JSON.stringify(data.body));
+        errCount = 0;
       }
       else if (err) {
-        getCreds();
-        console.log(err);
+        errCount++;
+        if (errCount < 5 ) {
+          getCreds();
+          res.send('try again');
+          console.log(err);
+          console.log(typeof err);
+        }
+        else {return;}
       }
     });
   });
@@ -81,6 +89,7 @@ module.exports = (app) => {
     for (let song of songs) {
       db.set(song['id'], song['description']).write();
     }
+    res.send();
   });
 
   app.get('/', (req, res) => {
