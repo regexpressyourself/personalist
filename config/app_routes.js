@@ -6,6 +6,7 @@ const FileSync = require('lowdb/adapters/FileSync')
 var SpotifyWebApi = require('spotify-web-api-node');
 const adapter = new FileSync('db.json')
 const db = low(adapter)
+require('dotenv').config()
 
 db.defaults({ playlistsongs: {} }).write()
 
@@ -13,8 +14,8 @@ db.defaults({ playlistsongs: {} }).write()
 let spotifyApi;
 let getCreds = () => { 
   spotifyApi = new SpotifyWebApi({
-    clientId: '9e86013c99c74130935c09f827ab9cf4',
-    clientSecret: 'c4e6904f57964fb3a9c52fe83d2fac65',
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
     redirectUri: '/'
   });
   spotifyApi.clientCredentialsGrant().then(

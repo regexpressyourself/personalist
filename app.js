@@ -2,10 +2,8 @@
 const express = require('express');
 const errorHandler = require('errorhandler');
 const path = require('path');
-const dotenv = require('dotenv');
 const chalk = require('chalk');
 
-dotenv.load({ path: '.env' });
 
 // Create Express server
 const app = express();
