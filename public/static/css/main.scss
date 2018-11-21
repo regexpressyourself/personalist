@@ -13,3 +13,32 @@
     cursor: pointer;
   }
 }
+
+.save-confirmation {
+  text-align: center;
+  z-index: 10000;
+  position: fixed;
+  transition: all .75s;
+  top: -300px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 3px 8px 0 rgba(0,0,0,0.2),0 0 0 1px rgba(0,0,0,0.08);
+  border-top: 0;
+  padding: 10px 20px;
+  background-color: $orange;
+
+  p {
+    font-size: 16px !important;
+    color: white;
+    line-height: 1;
+
+    &.big {
+      font-size: 20px !important;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+  }
+}
+.save-confirmation--on {
+  top: 0;
+}
