@@ -63,6 +63,7 @@ let updateUserPlaylistsView = () => {
   httpGetAsync(`/playlists?user=${state.user}`, function(data) {
     if (data === 'try again') {
       updateUserPlaylistsView();
+      return;
     }
     let items = [];
     data = JSON.parse(data).items;
@@ -84,16 +85,24 @@ let updateUserPlaylistsView = () => {
   });
 }
 
+let redirectToListView = () => {
+  let id = document.getElementById('username').value;
+  window.location.href = `/lists?user=${id}`;
+}
+
+let checkForEnter = (event) => {
+    if (event.keyCode == 13) {
+      redirectToListView();
+    }
+}
+
 let updateInitialView = () => {
   updateMainView(`
       <div class="btn-container">
-        <a class="btn"  href="/lists?user=smessina" >
-          Sam
-        </a>
-          <br />
-          <a class="btn" href="/lists?user=kwatch90210" >
-            Kendall
-          </a>
+          <input onkeypress="checkForEnter(event)" type="text" name="username" id="username" placeholder="Enter your Spotify username">
+          <button class="btn" onclick="redirectToListView()" >
+            Go!
+          </button>
       </div>
     <div class="bands">
       <p></p>
@@ -242,5 +251,6 @@ function findGetParameter(parameterName) {
     default:
       break;
   }
+
 
 })()

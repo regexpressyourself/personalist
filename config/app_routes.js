@@ -41,6 +41,7 @@ module.exports = (app) => {
       if (data !== undefined) {
         res.send(JSON.stringify(data.body));
         errCount = 0;
+        return;
       }
       else if (err) {
         errCount++;
