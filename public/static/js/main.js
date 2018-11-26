@@ -97,6 +97,8 @@ let checkForEnter = (event) => {
 }
 
 let updateInitialView = () => {
+  document.querySelector('.header-img').src = '/images/personalist-white.png';
+  document.querySelector('.header-img').classList.add('header-img--home');
   updateMainView(`
       <div class="btn-container">
           <input onkeypress="checkForEnter(event)" type="text" name="username" id="username" placeholder="Enter your Spotify username">

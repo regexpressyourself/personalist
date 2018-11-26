@@ -70,7 +70,7 @@
     max-width: 90vw;
   }
   .btn {
-    font-size: 24px;
+    font-size: 18px;
     border: 0px solid #333;
     border-radius: 5px;
     background-color: white;
@@ -80,6 +80,9 @@
     margin: 20px auto;
     z-index: 1;
     min-width: 200px;
+    @media screen and (max-width: 768px) {
+    padding: 10px 20px;
+    }
   }
   input {
     margin: 20px auto;

@@ -7,6 +7,13 @@ header {
   a {
     text-decoration: none;
   }
+  img {
+    max-height: 90px;
+  }
+  img.header-img--home {
+    max-height: 50vh;
+    margin-top: 15vh;
+  }
   h1 {
     color: $orange;
     font-family: 'Acme', sans-serif;
