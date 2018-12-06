@@ -98,6 +98,8 @@ let checkForEnter = (event) => {
 
 let updateInitialView = () => {
   document.querySelector('.header-img').src = '/images/personalist-white.png';
+  document.querySelector('.header-img-container').classList.add('header-img-container--home');
+
   document.querySelector('.header-img').classList.add('header-img--home');
   updateMainView(`
       <div class="btn-container">
@@ -121,7 +123,7 @@ let updatePlaylistSongsView = () => {
     for (let song of data['items']) {
       let hasDescription = '';
       let newData = {
-        // the special id for playlist+song combination. 
+        // the special id for playlist+song combination.
         // this is the key in the db for the song. the value is the description
         "messinaID": song.messinaId,
         "description": song.description
@@ -140,9 +142,9 @@ let updatePlaylistSongsView = () => {
           </span>
         </p>
         <div class="song-item__description song-item__description--${song.id}">
-          <textarea type="text" 
-                    placeholder="Description" 
-                    name="song-${song.messinaId}" 
+          <textarea type="text"
+                    placeholder="Description"
+                    name="song-${song.messinaId}"
                     id="song-${song.messinaId}">${song.description}</textarea>
           <div class="song-item__description__btn-container">
             <button id="save-btn-${song.messinaId}" class="save-btn clickable" onclick="setPlaylistSongs('${song.messinaId}')">Save</button>
