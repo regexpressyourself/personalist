@@ -11,6 +11,9 @@ header {
     max-width: 80vw;
     max-height: 40vh;
     margin: 10vh auto 5vh;
+    @media screen and (max-width: 768px) {
+    margin: 2vh auto;
+    }
   }
   img {
     max-width:100%;
