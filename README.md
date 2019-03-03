@@ -1,7 +1,7 @@
 <img alt="personaList" align="right" src="https://smessina.com/static/images/sss/pl-1.png" width="400px"/>
 
 # <img alt="personaList" align="left" src="https://smessina.com/static/images/personalist.png" width="400px"/>
-
+<br />
 
 Add comments to your Spotify playlists
 
