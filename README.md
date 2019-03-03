@@ -1,4 +1,5 @@
 <img alt="personaList" align="right" src="https://smessina.com/static/images/sss/pl-1.png" width="400px"/>
+<img alt="personaList" align="right" src="https://smessina.com/static/images/sss/pl-1.png" width="400px"/>
 
 # personaList
 
