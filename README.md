@@ -1,11 +1,10 @@
 <img alt="personaList" align="right" src="https://smessina.com/static/images/sss/pl-1.png" width="400px"/>
 
-# <img alt="personaList" align="left" src="https://smessina.com/static/images/personalist.png" width="400px"/>
-<br />
-<br />
-<br />
-<br />
+<img alt="personaList" align="left" src="https://smessina.com/static/images/personalist.png" width="400px"/>
 
+# personaList
+ 
+   
 Add comments to your Spotify playlists
 
 [See it live here!](https://personalist.smessina.com/)
