@@ -12,7 +12,7 @@ db.defaults({ playlistsongs: {} }).write()
 
 
 let spotifyApi;
-let getCreds = () => { 
+let getCreds = () => {
   spotifyApi = new SpotifyWebApi({
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
@@ -87,7 +87,7 @@ module.exports = (app) => {
 
 
   app.post('/playlist', (req, res) => {
-    let songs = req.body.payload;
+    let songs = req.body;
     for (let song of songs) {
       db.set(song['id'], song['description']).write();
     }
@@ -95,29 +95,6 @@ module.exports = (app) => {
   });
 
   app.get('/', (req, res) => {
-    spotifyApi.getUser('petteralexis')
-  .then(function(data) {
-    console.log('Some information about this user', data.body);
-  }, function(err) {
-    console.log('Something went wrong!', err);
-  })
-    spotifyApi.getMe()
-      .then(function(data) {
-        // "Retrieved data for Faruk Sahin"
-        console.log('Retrieved data for ' + data.body['display_name']);
-
-        // "Email is farukemresahin@gmail.com"
-        console.log('Email is ' + data.body.email);
-
-        // "Image URL is http://media.giphy.com/media/Aab07O5PYOmQ/giphy.gif"
-        console.log('Image URL is ' + data.body.images[0].url);
-
-        // "This user has a premium account"
-        console.log('This user has a ' + data.body.product + ' account');
-      })
-      .catch(function(err) {
-        console.log('Something went wrong', err);
-      });
     app.use('/', express.static('public'));
     app.use('/images', express.static('public/static/images'));
     app.use('/css', express.static('public/static/css'));

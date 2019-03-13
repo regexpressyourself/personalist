@@ -20,6 +20,10 @@ gulp.task('js', function(){
     .pipe(sourcemaps.init())
     .pipe(babel({
       presets: ['@babel/env'
+      ],
+      plugins: [
+        'syntax-async-functions',
+        'transform-regenerator'
       ]
     }))
     .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })

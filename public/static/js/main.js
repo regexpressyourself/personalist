@@ -4,74 +4,81 @@ let state = {
 }
 
 
-function httpGetAsync(theUrl, callback) { //theURL or a path to file
-  var httpRequest = new XMLHttpRequest();
-  httpRequest.onreadystatechange = function() {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      var data = httpRequest.responseText; //if you fetch a file you can JSON.parse(httpRequest.responseText)
-      if (callback) {
-        callback(data);
+function httpGetAsync(theUrl) {
+  return new Promise( (resolve, reject) => {
+    let httpRequest = new XMLHttpRequest();
+
+    httpRequest.open('GET', theUrl, true);
+
+    httpRequest.onload = () => {
+      let data = httpRequest.responseText;
+      if (httpRequest.status == 200) {
+        resolve(data)
       }
-    }
-  };
-
-  httpRequest.open('GET', theUrl, true);
-  httpRequest.send(null);
-}
-
-
-function httpPostAsync(theUrl, payload, callback) { //theURL or a path to file
-  var httpRequest = new XMLHttpRequest();
-  httpRequest.onreadystatechange = function() {
-    if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-      var data = httpRequest.responseText; //if you fetch a file you can JSON.parse(httpRequest.responseText)
-      if (callback) {
-        callback(data);
+      else {
+        reject({
+          status: this.status,
+          statusText: xhr.statusText
+        });
       }
-    }
-  };
+    };
+    httpRequest.onerror = () => {
+      reject({
+        status: this.status,
+        statusText: xhr.statusText
+      });
+    };
 
-  httpRequest.open('POST', theUrl, true);
-  httpRequest.setRequestHeader('Content-Type', 'application/json');
-  httpRequest.send(JSON.stringify({
-    payload: payload
-  }));
+    httpRequest.send(null);
+  });
 }
 
-const kendall_user = 'kwatch90210';
-const kendall_playlist = '2nrEA3uA0oD23f5KuRUu7u';
 
-const sam_user = 'smessina';
+function httpPostAsync(theUrl, payload) {
+  return new Promise((resolve, reject) => {
+    let httpRequest = new XMLHttpRequest();
 
+    httpRequest.open('POST', theUrl, true);
+    httpRequest.setRequestHeader('Content-Type', 'application/json');
 
-let getUserPlaylists = (user) => {
-  switch (user) {
-    case 'sam':
-      user = sam_user;
-      break;
-    case 'kendall':
-      user = kendall_user;
-      break;
-    default:
-      break
-  }
-  state.user = user;
-  updateUserPlaylistsView();
+    httpRequest.onload = () => {
+      if (httpRequest.status == 200) {
+        let data = httpRequest.responseText;
+        resolve(data);
+      }
+      else {
+        reject({
+          status: this.status,
+          statusText: xhr.statusText
+        });
+      }
+    };
+
+    httpRequest.onerror = () => {
+      reject({
+        status: this.status,
+        statusText: xhr.statusText
+      });
+    };
+
+    httpRequest.send(JSON.stringify(payload));
+  });
 }
 
-let updateUserPlaylistsView = () => {
-  httpGetAsync(`/playlists?user=${state.user}`, function(data) {
-    if (data === 'try again') {
-      updateUserPlaylistsView();
-      return;
-    }
-    let items = [];
-    data = JSON.parse(data).items;
+let updateUserPlaylistsView = (playlists) => {
+  httpGetAsync(`/playlists?user=${state.user}`)
+    .then((data) => {
+      if (data === 'try again') {
+        updateUserPlaylistsView();
+        return;
+      }
+      let items = [];
+      data = JSON.parse(data).items;
 
-    for (let i = 0; i < data.length; i++) {
-      let playlist = data[i];
-      let oddEvenModifier = (i % 2 === 0) ? 'odd' : 'even';
-      items.push(`<p class="playlist playlist--${oddEvenModifier}">
+      for (let i = 0; i < data.length; i++) {
+        let playlist = data[i];
+        let oddEvenModifier = (i % 2 === 0) ? 'odd' : 'even';
+        items.push(`<p class="playlist playlist--${oddEvenModifier}">
                     <span class="playlist__pointer playlist__pointer--${oddEvenModifier}"></span>
                     <a class="playlist__link playlist__link--${oddEvenModifier}" href="/songs?user=${state.user}&list=${playlist.id}" >
                       <span>
@@ -80,9 +87,11 @@ let updateUserPlaylistsView = () => {
                     </a>
                   </p>
                 `);
-    }
-    updateMainView(items.join(''));
-  });
+      }
+      updateMainView(items.join(''));
+    }, (data) => {
+      console.log(data);
+    });
 }
 
 let redirectToListView = () => {
@@ -91,9 +100,9 @@ let redirectToListView = () => {
 }
 
 let checkForEnter = (event) => {
-    if (event.keyCode == 13) {
-      redirectToListView();
-    }
+  if (event.keyCode == 13) {
+    redirectToListView();
+  }
 }
 
 let updateInitialView = () => {
@@ -117,21 +126,22 @@ let updateInitialView = () => {
 }
 
 let updatePlaylistSongsView = () => {
-  httpGetAsync(`/playlist?user=${state.user}&list=${state.list}`, function(data) {
-    let items = [];
-    data = JSON.parse(data);
-    for (let song of data['items']) {
-      let hasDescription = '';
-      let newData = {
-        // the special id for playlist+song combination.
-        // this is the key in the db for the song. the value is the description
-        "messinaID": song.messinaId,
-        "description": song.description
-      }
-      if (song.description.length > 0) {
-        hasDescription = 'has-description';
-      }
-      items.push(`
+  httpGetAsync(`/playlist?user=${state.user}&list=${state.list}`)
+    .then((data) => {
+      let items = [];
+      data = JSON.parse(data);
+      for (let song of data['items']) {
+        let hasDescription = '';
+        let newData = {
+          // the special id for playlist+song combination.
+          // this is the key in the db for the song. the value is the description
+          "messinaID": song.messinaId,
+          "description": song.description
+        }
+        if (song.description.length > 0) {
+          hasDescription = 'has-description';
+        }
+        items.push(`
       <div class="song-item song-item--${song.id} ${hasDescription}">
         <p onclick="toggleDescription(event, '${song.id}')" class="song-item__name song-item__name--${song.id} clickable">
           <span>
@@ -153,10 +163,10 @@ let updatePlaylistSongsView = () => {
         </div>
       </div>
       `);
-    }
-    items.push('<div id="embed-player"></div>');
-    updateMainView(items.join(''));
-  });
+      }
+      items.push('<div id="embed-player"></div>');
+      updateMainView(items.join(''));
+    });
 }
 
 let setPlaylistSongs = (id) => {
@@ -168,7 +178,8 @@ let setPlaylistSongs = (id) => {
     'description': newDescription
   }];
 
-  httpPostAsync('/playlist', payload, (data) => {
+  httpPostAsync('/playlist', payload)
+  .then((data) => {
     let saveConfirmation = document.querySelector('.save-confirmation');
     saveConfirmation.classList.add('save-confirmation--on');
 
