@@ -41,6 +41,7 @@ class Playlists extends Component {
 
   render() {
     if (this.state.chosenPlaylist) {
+      this.props.history.push('/songs');
       return <Redirect to={{ pathname: "/songs", state: this.state }} />;
     }
     return (

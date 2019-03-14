@@ -51,6 +51,8 @@ class Home extends Component {
 
   render() {
     if (this.state.spotifyData) {
+      this.props.history.push('/');
+      this.props.history.push('/playlists');
       return <Redirect to={{ pathname: "/playlists", state: this.state }} />;
     }
     return (

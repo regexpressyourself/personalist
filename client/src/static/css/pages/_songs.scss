@@ -31,10 +31,9 @@
             margin: 5% auto;
         }
     }
-    .song-item.has-description textarea,
-    .song-item.has-description p{
-        border-color: $yellow;
 
+    .song-item.has-description p{
+        background-color: $yellow;
     }
 
     .song-item__name {
@@ -44,7 +43,8 @@
         text-align: center;
         background-color: white;
         z-index: 1000;
-        border: 2px solid $teal;
+        border-top: 6px solid $orange;
+        border-bottom: 6px solid $orange;
         border-radius: 5px;
         min-width: 200px;
         max-width: 400px;
@@ -85,8 +85,6 @@
             resize: none;
             display: none;
         }
-
-        @media screen and (max-width: 768px) {}
     }
 
     #embed-player {
@@ -120,7 +118,7 @@
                 left: 51%;
                 right: 51%;
                 top: 0;
-                background: $orange;
+                background: $yellow;
                 height: 4px;
                 -webkit-transition-property: left, right;
                 transition-property: left, right;
@@ -131,13 +129,15 @@
             }
 
             &:first-child {
-                border-bottom: 4px solid $yellow;
+                border-bottom: 4px solid $orange;
 
                 &::before {
-                    background: $yellow;
+                    background: $orange;
                 }
             }
-            &:last-child {}
+            &:last-child {
+                border-bottom: 4px solid $yellow;
+            }
 
             &:hover {
                 &::before {
