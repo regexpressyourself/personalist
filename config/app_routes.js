@@ -6,6 +6,7 @@ const FileSync = require('lowdb/adapters/FileSync')
 var SpotifyWebApi = require('spotify-web-api-node');
 const adapter = new FileSync('db.json')
 const db = low(adapter)
+var cors = require('cors')
 require('dotenv').config()
 
 db.defaults({ playlistsongs: {} }).write()
@@ -36,7 +37,14 @@ let errCount = 0;
 
 module.exports = (app) => {
 
+  app.use(cors());
+
   app.get('/playlists', (req, res) => {
+
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
     spotifyApi.getUserPlaylists(req.query.user, {}, (err, data) => {
       if (data !== undefined) {
         res.send(JSON.stringify(data.body));
@@ -57,6 +65,10 @@ module.exports = (app) => {
   });
 
   app.get('/playlist', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
     let songList = {items: []};
 
     spotifyApi.getPlaylistTracks(req.query.user, req.query.list, {}, (err, data) => {
@@ -87,6 +99,11 @@ module.exports = (app) => {
 
 
   app.post('/playlist', (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
     let songs = req.body;
     for (let song of songs) {
       db.set(song['id'], song['description']).write();

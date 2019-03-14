@@ -16,7 +16,7 @@ var dest = require('gulp-dest');
 var gutil = require('gulp-util');
 
 gulp.task('js', function(){
-  return gulp.src(['public/static/js/**/*.js', '!public/static/js/min/*'])
+  return gulp.src(['client/src/static/js/**/*.js', '!client/src/static/js/min/*'])
     .pipe(sourcemaps.init())
     .pipe(babel({
       presets: ['@babel/env'
@@ -30,11 +30,11 @@ gulp.task('js', function(){
     .pipe(concat('main.min.js'))
     .pipe(uglify())
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('public/static/js/min'))
+    .pipe(gulp.dest('client/src/static/js/min'))
 });
 
 gulp.task('css', function(){
-  return gulp.src('public/static/css/main.scss')
+  return gulp.src('client/src/static/css/main.scss')
     .pipe(sourcemaps.init())
     .pipe(sass().on('error', sass.logError))
     .pipe(sourcemaps.write())
@@ -42,11 +42,11 @@ gulp.task('css', function(){
       browsers: ['last 2 versions'],
       cascade: false
     }))
-    .pipe(gulp.dest('public/static/css/min'));
+    .pipe(gulp.dest('client/src/static/css/min'));
 });
 gulp.task('watch', ['css', 'js'], function () {
-  gulp.watch('public/static/css/**/*.scss', ['css']);
-  gulp.watch('public/static/js/**/*.js', ['js']);
+  gulp.watch('client/src/static/css/**/*.scss', ['css']);
+  gulp.watch('client/src/static/js/**/*.js', ['js']);
 });
 
 

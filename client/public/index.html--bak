@@ -1,5 +1,5 @@
-<!doctype html>
-<html class="no-js" lang="en">
+<!DOCTYPE html>
+<html lang="en">
 
   <head>
 
@@ -21,14 +21,14 @@
   <meta name="twitter:title" content="personaList | Personalize Your Spotify Playlists" />
   <meta name="twitter:url" content="https://personalist.smessina.com/" />
   <meta name="twitter:description" content="Add custom comments to you Spotify playlists!" />
-  <meta name="twitter:image" content="https://personalist.smessina.com/images/personalist-orange.png" /> 
+  <meta name="twitter:image" content="https://personalist.smessina.com/images/personalist-orange.png" />
 
 
   <meta property="og:title" content="personaList | Personalize Your Spotify Playlists" />
   <meta property="og:url" content="https://personalist.smessina.com/" />
   <meta property="og:description" content="Add custom comments to you Spotify playlists!" />
   <meta property="og:image" content="https://personalist.smessina.com/images/personalist-orange.png" />
-  <meta property="og:type" content="article" /> 
+  <meta property="og:type" content="article" />
 
     <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -48,12 +48,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <p class="big">Save Successful!</p>
     </div>
     <section>
-      <header>
-        <a class="header-img-container" title="Personalist Home" href="/">
-          <img class="header-img" src="/images/personalist-orange.png" alt="PersonaList">
-        </a>
-      </header>
-      <main id="main">
+      <main id="root">
         <!--<input type="text" value="" placeholder="Spotify Username" name="user" id="user"/>-->
       </main>
     </section>

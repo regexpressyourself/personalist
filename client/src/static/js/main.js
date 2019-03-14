@@ -22,6 +22,7 @@ function httpGetAsync(theUrl) {
         });
       }
     };
+
     httpRequest.onerror = () => {
       reject({
         status: this.status,
@@ -68,10 +69,6 @@ function httpPostAsync(theUrl, payload) {
 let updateUserPlaylistsView = (playlists) => {
   httpGetAsync(`/playlists?user=${state.user}`)
     .then((data) => {
-      if (data === 'try again') {
-        updateUserPlaylistsView();
-        return;
-      }
       let items = [];
       data = JSON.parse(data).items;
 
@@ -124,6 +121,7 @@ let updateInitialView = () => {
     </div>
   `);
 }
+
 
 let updatePlaylistSongsView = () => {
   httpGetAsync(`/playlist?user=${state.user}&list=${state.list}`)

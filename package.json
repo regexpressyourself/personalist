@@ -12,8 +12,9 @@
 	},
 	"dependencies": {
 		"body-parser": "^1.18.2",
-		"chalk": "^2.2.0",
+		"chalk": "^2.4.2",
 		"compression": "^1.7.1",
+		"cors": "^2.8.5",
 		"dotenv": "^4.0.0",
 		"errorhandler": "^1.5.0",
 		"express": "^4.16.2",
@@ -63,8 +64,6 @@
 		"style-loader": "^0.23.0",
 		"uglify": "^0.1.5",
 		"vinyl-buffer": "^1.0.1",
-		"vinyl-source-stream": "^2.0.0",
-		"webpack": "^4.17.2",
-		"webpack-cli": "^3.1.0"
+		"vinyl-source-stream": "^2.0.0"
 	}
 }
