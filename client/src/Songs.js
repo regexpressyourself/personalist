@@ -9,11 +9,29 @@ class Songs extends Component {
     this.state.items = [];
 
     this.createPlaylists = this.createPlaylists.bind(this);
-    this.getPlaylistData = this.getPlaylistData.bind(this);
     this.playSong = this.playSong.bind(this);
     this.pauseSong = this.pauseSong.bind(this);
     this.toggleDescription = this.toggleDescription.bind(this);
     this.setPlaylistSongs = this.setPlaylistSongs.bind(this);
+    this.getPlaylistData = this.getPlaylistData.bind(this);
+  }
+  componentWillMount() {
+    this.getPlaylistData(this.state.chosenPlaylist);
+  }
+
+  getPlaylistData(playlist) {
+    axios.get(`http://localhost:3000/playlist?user=${this.state.username}&list=${playlist.id}`)
+      .then((response) => {
+        // handle success
+        this.setState({playlistData: response.data.items}, this.createPlaylists)
+      })
+      .catch((error) => {
+        // handle error
+        console.log(error);
+      })
+      .then(() => {
+        // always executed
+      });
   }
 
   setPlaylistSongs(id) {
@@ -24,10 +42,16 @@ class Songs extends Component {
     }];
 
     axios.post('http://localhost:3000/playlist', payload)
-      .then(function (response) {
+      .then((response) => {
         let saveConfirmation = document.querySelector('.save-confirmation');
         saveConfirmation.classList.add('save-confirmation--on');
-
+        let playlistData = this.state.playlistData.map((item) => {
+          if (item.id === payload.id) {
+            item.description = newDescription;
+          }
+          return item;
+        });
+        this.setState({playlistData: playlistData});
         setTimeout(() => {
           saveConfirmation.classList.remove('save-confirmation--on');
         }, 3000);
@@ -52,20 +76,6 @@ class Songs extends Component {
       songEl.classList.remove('song-item--hidden');
     }
   }
-
-  getPlaylistData(playlist) {
-    axios.get(`http://localhost:3000/playlist?user=${this.state.username}&list=${playlist.id}`)
-      .then((response) => {
-        // handle success
-        let data = response.data;
-        this.setState({playlistData: data})
-      })
-      .catch((error) => {
-        // handle error
-        console.log(error);
-      });
-  }
-
 
   pauseSong(songId) {
     document.querySelectorAll(`#embed-player`)[0].innerHTML = ``;
@@ -97,7 +107,7 @@ class Songs extends Component {
   createPlaylists() {
     let data = this.state.playlistData;
     let items = [];
-    for (let song of data['items']) {
+    for (let song of data) {
       let hasDescription = '';
       if (song.description.length > 0) {
         hasDescription = 'has-description';
@@ -124,25 +134,26 @@ class Songs extends Component {
             </div>
           </div>
         </div>
-        );
-        }
-        items.push(<div key="player" id="embed-player"></div>);
-        return items;
-        }
+      );
+    }
+    items.push(<div key="player" id="embed-player"></div>);
+    this.setState({newItems: items});
+    return items;
+  }
 
-        render() {
-          return (
-            <div id="songs">
-              <div className="save-confirmation">
-                <p className="big">Save Successful!</p>
-              </div>
-              <Nav />
-              <main id="main">
-                {this.createPlaylists()}
-              </main>
-            </div>
-          );
-        }
-        }
+  render() {
+    return (
+      <div id="songs">
+        <div className="save-confirmation">
+          <p className="big">Save Successful!</p>
+        </div>
+        <Nav />
+        <main id="main">
+          {this.state.newItems}
+        </main>
+      </div>
+    );
+  }
+}
 
-        export default Songs;
+export default Songs;

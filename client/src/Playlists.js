@@ -15,20 +15,9 @@ class Playlists extends Component {
 
 
   getPlaylistData(playlist) {
-    axios.get(`http://localhost:3000/playlist?user=${this.state.username}&list=${playlist.id}`)
-      .then((response) => {
-        // handle success
-        let data = response.data;
-        this.setState({playlistData: data})
-      })
-      .catch((error) => {
-        // handle error
-        console.log(error);
-      })
-      .then(() => {
-        // always executed
-      });
+    this.setState({chosenPlaylist: playlist});
   }
+
   createPlaylists() {
     let data = this.state.spotifyData;
     let items = [];
@@ -51,7 +40,7 @@ class Playlists extends Component {
   }
 
   render() {
-    if (this.state.playlistData) {
+    if (this.state.chosenPlaylist) {
       return <Redirect to={{ pathname: "/songs", state: this.state }} />;
     }
     return (
