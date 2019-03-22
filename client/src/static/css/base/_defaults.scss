@@ -1,5 +1,91 @@
-.btn {
-}
+.btn {}
+
 #main {
   min-height: calc(100vh - 140px);
+}
+
+.error-text,
+.loading-text {
+  max-height: 100px;
+  color: $orange;
+  font-weight: 600;
+  margin: auto;
+  font-size: 36px;
+  text-align: center;
+    margin-bottom: 20px;
+  a {
+    text-decoration: underline;
+    color: $orange;
+  }
+}
+.placeholder {
+  height: calc(99vh - 170px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  span {
+    display: inline-block;
+    transform: scale(0);
+    opacity: .2;
+    color: $orange;
+    svg {
+      width: 30vw;
+      height: 30vw;
+    }
+
+  }
+  span:nth-of-type(1) {
+    animation: scale-in-center-1 1.2s cubic-bezier(0.550, 0.085, 0.680, 0.530) both infinite;
+  }
+  span:nth-of-type(2) {
+    animation: scale-in-center-2 1.2s cubic-bezier(0.550, 0.085, 0.680, 0.530) both infinite;
+  }
+  span:nth-of-type(3) {
+    animation: scale-in-center-3 1.2s cubic-bezier(0.550, 0.085, 0.680, 0.530) both infinite;
+  }
+}
+
+@keyframes scale-in-center-1 {
+  0% {
+    transform: scale(0);
+    opacity: .2;
+  }
+  25% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0);
+    opacity: .2;
+  }
+}
+
+@keyframes scale-in-center-2 {
+  25% {
+    transform: scale(0);
+    opacity: .2;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(0);
+    opacity: .2;
+  }
+}
+
+@keyframes scale-in-center-3 {
+  50% {
+    transform: scale(0);
+    opacity: .2;
+  }
+  75% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: .2;
+  }
 }

@@ -41,10 +41,7 @@ module.exports = (app) => {
 
   app.get('/playlists', (req, res) => {
 
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    app.use(cors());
     spotifyApi.getUserPlaylists(req.query.user, {}, (err, data) => {
       if (data !== undefined) {
         res.send(JSON.stringify(data.body));
@@ -55,9 +52,7 @@ module.exports = (app) => {
         errCount++;
         if (errCount < 5 ) {
           getCreds();
-          res.send('try again');
-          console.log(err);
-          console.log(typeof err);
+          res.send(err);
         }
         else {return;}
       }
@@ -65,10 +60,7 @@ module.exports = (app) => {
   });
 
   app.get('/playlist', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    app.use(cors());
     let songList = {items: []};
 
     spotifyApi.getPlaylistTracks(req.query.user, req.query.list, {}, (err, data) => {
@@ -99,10 +91,7 @@ module.exports = (app) => {
 
 
   app.post('/playlist', (req, res) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    app.use(cors());
 
     let songs = req.body;
     for (let song of songs) {

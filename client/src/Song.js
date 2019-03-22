@@ -45,11 +45,11 @@ class Song extends Component {
 
   }
 
-  toggleDescription(event, songId) {
+  toggleDescription(event) {
 
     if (event.target.closest('.song-item__name__play')) return;
 
-    let songEl = document.querySelectorAll(`.song-item--${songId}`)[0];
+    let songEl = document.querySelectorAll(`.song-item--${this.state.songId}`)[0];
     if (songEl.classList.contains('song-item--shown')) {
       songEl.classList.add('song-item--hidden');
       songEl.classList.remove('song-item--shown');
@@ -59,32 +59,36 @@ class Song extends Component {
     }
   }
 
-  pauseSong(songId) {
+  pauseSong() {
+    this.setState({isPlaying: false}, () => {
     document.querySelectorAll(`#embed-player`)[0].innerHTML = ``;
-    document.querySelectorAll(`#play-icon--${songId}`)[0].style.opacity = 0;
-    document.querySelectorAll(`#play-icon--${songId}`)[0].classList.remove('play-icon--playing');
+    document.querySelectorAll(`#play-icon--${this.state.songId}`)[0].style.opacity = 0;
+    document.querySelectorAll(`#play-icon--${this.state.songId}`)[0].classList.remove('play-icon--playing');
     setTimeout(() => {
-      document.querySelectorAll(`#play-icon--${songId}`)[0].innerHTML = `
-            <svg id="play-icon-${songId}" class="feather feather-play sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-reactid="916"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+      document.querySelectorAll(`#play-icon--${this.state.songId}`)[0].innerHTML = `
+            <svg id="play-icon-${this.state.songId}" class="feather feather-play sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-reactid="916"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
   `;
-      document.querySelectorAll(`#play-icon--${songId}`)[0].onclick = () => this.playSong(songId);
-      document.querySelectorAll(`#play-icon--${songId}`)[0].style.opacity = 1;
+      document.querySelectorAll(`#play-icon--${this.state.songId}`)[0].style.opacity = 1;
     }, 500);
+    });
   }
 
 
-  playSong(songId) {
-    document.querySelectorAll(`#embed-player`)[0].innerHTML = `<iframe src="https://open.spotify.com/embed/track/${songId}" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`;
-    document.querySelectorAll(`#play-icon--${songId}`)[0].style.opacity = 0;
-    document.querySelectorAll(`#play-icon--${songId}`)[0].onclick = () => this.pauseSong(songId);
-    document.querySelectorAll(`#play-icon--${songId}`)[0].classList.add('play-icon--playing');
-    setTimeout(() => {
-      document.querySelectorAll(`#play-icon--${songId}`)[0].innerHTML = `
-<svg id="pause-icon-${songId}" class="feather feather-x sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-reactid="1336"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+  playSong() {
+    if (this.state.isPlaying) {this.pauseSong();}
+    else {
+      this.setState({isPlaying: true}, () => {
+        document.querySelectorAll(`#embed-player`)[0].innerHTML = `<iframe src="https://open.spotify.com/embed/track/${this.state.songId}" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`;
+        document.querySelectorAll(`#play-icon--${this.state.songId}`)[0].style.opacity = 0;
+        document.querySelectorAll(`#play-icon--${this.state.songId}`)[0].classList.add('play-icon--playing');
+        setTimeout(() => {
+          document.querySelectorAll(`#play-icon--${this.state.songId}`)[0].innerHTML = `
+<svg id="pause-icon-${this.state.songId}" class="feather feather-x sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-reactid="1336"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
   `;
-      document.querySelectorAll(`#play-icon--${songId}`)[0].onclick = () => this.pauseSong(songId);
-      document.querySelectorAll(`#play-icon--${songId}`)[0].style.opacity = 1;
-    }, 500);
+          document.querySelectorAll(`#play-icon--${this.state.songId}`)[0].style.opacity = 1;
+        }, 500);
+      });
+    }
   }
 
   render() {

@@ -7,8 +7,8 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
-      spotifyData: false
+      username: 'smessina',
+      playlistData: false
     };
 
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
@@ -21,7 +21,7 @@ class Home extends Component {
   }
 
   handleUsernameChange(event) {
-    this.setState({username: event.target.value});
+    this.setState({username: event.target.value}, () => {console.log(this.state.username);});
   }
 
   handleKeyPress(e) {
@@ -30,27 +30,29 @@ class Home extends Component {
     }
   }
 
-  getUserData(useDefaultVal = false) {
-    let username = useDefaultVal ? 'smessina' : this.state.username;
+  getUserData() {
 
-    axios.get(`http://localhost:3000/playlists?user=${username}`)
+    axios.get(`http://localhost:3000/playlists?user=${this.state.username}`)
       .then((response) => {
         // handle success
-        let data = response.data;
-        data = data.items;
-        this.setState({spotifyData: data});
+        if (response.data.name === 'WebapiError') {
+          this.setState({errorMsg: <span>Oops! Looks like there was a problem. <br />Does {this.state.username} exist?<br /><a href={`https://open.spotify.com/user/${this.state.username}`} target="_blank"> Check here.</a></span>});
+          this.setState({playlistData: false});
+        }
+        else {
+          let playlistData = response.data.items;
+          this.setState({playlistData: playlistData});
+        }
+        return;
       })
       .catch((error) => {
         // handle error
-        console.log(error);
-      })
-      .then(() => {
-        // always executed
       });
   }
 
   render() {
-    if (this.state.spotifyData) {
+    if (this.state.playlistData) {
+      console.log(this.state);
       this.props.history.push('/');
       this.props.history.push('/playlists');
       return <Redirect to={{ pathname: "/playlists", state: this.state }} />;
@@ -58,7 +60,11 @@ class Home extends Component {
     return (
       <div id="home">
         <Nav />
-        <p>Enter your Spotify username below <span className="clickable" onClick={() => this.getUserData(true)}>(or try mine!)</span></p>
+        <p className="home-hint">
+          Enter your Spotify username below
+          <span className="clickable" onClick={() => this.getUserData(true)}>(or try mine!)</span>
+        </p>
+        <p className="home-hint"><br />{this.state.errorMsg}</p>
         <div className="btn-container">
           <input
             ref={(input) => { this.nameInput = input; }}
