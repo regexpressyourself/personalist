@@ -8,6 +8,7 @@ var sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 var browserify  = require('browserify');
 var babelify    = require('babelify');
+const cleanCSS = require('gulp-clean-css');
 var source      = require('vinyl-source-stream');
 var buffer      = require('vinyl-buffer');
 var uglify      = require('gulp-uglify');
@@ -38,6 +39,9 @@ gulp.task('css', function(){
     .pipe(autoprefixer({
       browsers: ['last 2 versions'],
       cascade: false
+    }))
+    .pipe(cleanCSS({
+      compatibility: 'ie11'
     }))
     .pipe(gulp.dest('client/src/static/css/min'));
 });
