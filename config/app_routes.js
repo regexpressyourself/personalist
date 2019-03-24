@@ -6,7 +6,6 @@ const FileSync = require('lowdb/adapters/FileSync')
 var SpotifyWebApi = require('spotify-web-api-node');
 const adapter = new FileSync('db.json')
 const db = low(adapter)
-var cors = require('cors')
 require('dotenv').config()
 
 db.defaults({ playlistsongs: {} }).write()
@@ -37,7 +36,6 @@ let errCount = 0;
 
 module.exports = (app) => {
 
-  app.use(cors());
 
   app.get('/playlists', (req, res) => {
 
