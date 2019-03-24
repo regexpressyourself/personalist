@@ -85,7 +85,7 @@ function updateSong(id, newDescription) {
     'id': id,
     'description': newDescription
   }];
-  axios.post('http://localhost:3000/playlist', payload)
+  axios.post('https://localhost:3000/playlist', payload)
     .then((response) => {
       let saveConfirmation = document.querySelector('.save-confirmation');
       saveConfirmation.classList.add('save-confirmation--on');
