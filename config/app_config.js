@@ -6,11 +6,12 @@ const expressStatusMonitor = require('express-status-monitor');
 const cors = require('cors')
 
 module.exports = (app) => {
+  app.use(cors());
+
   // Express configuration
   app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
   app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000);
 
-  app.use(cors());
 
   app.use(expressStatusMonitor());
 

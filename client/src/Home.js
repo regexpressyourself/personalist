@@ -31,7 +31,7 @@ function Home() {
     setUsername(currentUsername);
 
     // get the current user's playlists
-    axios.get(`https://localhost:3000/api/playlists?user=${currentUsername}`)
+    axios.get(`/api/playlists?user=${currentUsername}`)
       .then((response) => {
         if (response.data.name !== 'WebapiError') {
           // store the username and playlists for parsing after refresh
