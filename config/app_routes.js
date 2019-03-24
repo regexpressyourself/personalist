@@ -97,6 +97,18 @@ module.exports = (app) => {
     res.send();
   });
 
+  app.use(express.static(path.join(__dirname, '/../client/build')));
+
+  app.get('*', (req,res) =>{
+    res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+  });
+  app.get('/playlists', (req,res) =>{
+    res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+  });
+  app.get('/songs', (req,res) =>{
+    res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+  });
+
   app.use('/images', express.static('client/src/static/images'));
   app.use('/css', express.static('client/src/static/css'));
   app.use('/js', express.static('client/src/static/js'));
