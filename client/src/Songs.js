@@ -20,7 +20,7 @@ function Songs(props) {
     // get the playlists on load
     // if no playlist is in state, redirect to the home page
     if (!chosenPlaylist) {window.location.href = '/'; return;}
-    axios.get(`https://localhost:3000/playlist?user=${username}&list=${chosenPlaylist.id}`)
+    axios.get(`https://localhost:3000/api/playlist?user=${username}&list=${chosenPlaylist.id}`)
       .then((response) => {
         setPlaylistSongs(response.data.items);
       })

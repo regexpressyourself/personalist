@@ -37,7 +37,7 @@ let errCount = 0;
 module.exports = (app) => {
 
 
-  app.get('/playlists', (req, res) => {
+  app.get('/api/playlists', (req, res) => {
 
     spotifyApi.getUserPlaylists(req.query.user, {}, (err, data) => {
       if (data !== undefined) {
@@ -56,7 +56,7 @@ module.exports = (app) => {
     });
   });
 
-  app.get('/playlist', (req, res) => {
+  app.get('/api/playlist', (req, res) => {
     let songList = {items: []};
 
     spotifyApi.getPlaylistTracks(req.query.user, req.query.list, {}, (err, data) => {
@@ -86,7 +86,7 @@ module.exports = (app) => {
   });
 
 
-  app.post('/playlist', (req, res) => {
+  app.post('/api/playlist', (req, res) => {
 
     let songs = req.body;
     for (let song of songs) {
