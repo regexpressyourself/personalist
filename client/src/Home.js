@@ -1,89 +1,100 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router'
+import React, { useState, useEffect } from 'react';
+import { Redirect } from 'react-router';
 import Nav from './Nav';
 import axios from 'axios';
 
-class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: 'smessina',
-      playlistData: false
-    };
+function Home() {
+  const [username, setUsername] = useState( localStorage.getItem('username') || '');
+  const [playlists, setPlaylists] = useState(false);
+  const [usernameReady, setUsernameReady] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('none');
 
-    this.handleUsernameChange = this.handleUsernameChange.bind(this);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
-    this.getUserData = this.getUserData.bind(this);
-  }
-
-  componentDidMount() {
-    this.nameInput.focus();
-  }
-
-  handleUsernameChange(event) {
-    this.setState({username: event.target.value}, () => {console.log(this.state.username);});
-  }
-
-  handleKeyPress(e) {
+  const handleKeyPress = (e) => {
     if (e === true || e.key === 'Enter') {
-      this.getUserData();
+      setUsernameReady(true);
     }
   }
 
-  getUserData() {
+  useEffect(() => {
+    // listen for enter to trigger search
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, []);
 
-    axios.get(`http://localhost:3000/playlists?user=${this.state.username}`)
+  useEffect(() => {
+    if(!usernameReady) { return; }
+    // usernameReady is set to 'trymine' when the "try mine" link is clicked.
+    // we have to set the username to 'smessina' in this case.
+    let currentUsername = (usernameReady === 'trymine') ? 'smessina' : username;
+    setUsername(currentUsername);
+
+    // get the current user's playlists
+    axios.get(`http://localhost:3000/playlists?user=${currentUsername}`)
       .then((response) => {
-        // handle success
-        if (response.data.name === 'WebapiError') {
-          this.setState({errorMsg: <span>Oops! Looks like there was a problem. <br />Does {this.state.username} exist?<br /><a href={`https://open.spotify.com/user/${this.state.username}`} target="_blank"> Check here.</a></span>});
-          this.setState({playlistData: false});
+        if (response.data.name !== 'WebapiError') {
+          // store the username and playlists for parsing after refresh
+          localStorage.setItem('username', currentUsername);
+          localStorage.setItem('playlists', JSON.stringify(response.data.items));
+          // setting playlist prompts the redirect
+          setPlaylists(response.data.items);
+          return;
         }
         else {
-          let playlistData = response.data.items;
-          this.setState({playlistData: playlistData});
+          throw new Error();
         }
-        return;
       })
       .catch((error) => {
-        // handle error
+        setErrorMsg('block');
+        setUsernameReady(false);
       });
-  }
+  }, [usernameReady]);
 
-  render() {
-    if (this.state.playlistData) {
-      console.log(this.state);
-      this.props.history.push('/');
-      this.props.history.push('/playlists');
-      return <Redirect to={{ pathname: "/playlists", state: this.state }} />;
-    }
+  if (playlists.length)  {
+    return <Redirect to={{ pathname: "/playlists", username: username, playlists: playlists}} />;
+  }
+  else {
     return (
       <div id="home">
         <Nav />
         <p className="home-hint">
           Enter your Spotify username below
-          <span className="clickable" onClick={() => this.getUserData(true)}>(or try mine!)</span>
+          <span className="clickable"
+            onClick = { () => setUsernameReady('trymine') }>
+            (or try mine!)
+          </span>
         </p>
-        <p className="home-hint"><br />{this.state.errorMsg}</p>
-        <div className="btn-container">
-          <input
-            ref={(input) => { this.nameInput = input; }}
-            onKeyPress={this.handleKeyPress}
-            type="text"
-            name="username"
-            id="username"
-            placeholder="Spotify username"
-            value={this.state.value}
-            onChange={this.handleUsernameChange} />
+        <p className="home-hint">
+          <br />
+          <span style={{display: errorMsg}}>
+            Oops!Looks like there was a problem. <br />
+            Does {username} exist ? <br / >
+              <a href={ `https://open.spotify.com/user/${username}` }
+                target="_blank"
+                rel="noopener noreferrer">
+                Check here.
+              </a>
+            </span>
+          </p>
+          <div className="btn-container">
+            <input
+              type="text"
+              name="username"
+              id="username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              placeholder="Spotify username"
+              required
+            />
 
-          <button className="btn btn--home" onClick={this.getUserData} >
+          <button className="btn btn--home"
+            onClick={ () => setUsernameReady(true) }>
             Go!
           </button>
         </div>
         <div className="bands">
-          <p></p>
-          <p></p>
-          <p></p>
+          <p /><p /><p />
         </div>
       </div>
     );

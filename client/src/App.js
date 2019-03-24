@@ -6,15 +6,13 @@ import Songs from './Songs';
 
 function App() {
   return (
-    <div>
-      <Router>
-        <div>
-          <Route exact path="/" component={Home} />
-          <Route path="/playlists" component={Playlists} />
-          <Route path="/songs" component={Songs} />
-        </div>
-      </Router>
-    </div>
+    <Router>
+      <div>
+        <Route exact path="/" component={Home} />
+        <Route path="/playlists" component={Playlists} />
+        <Route path="/songs" component={Songs} />
+      </div>
+    </Router>
   );
 }
 

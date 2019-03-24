@@ -1,6 +1,7 @@
 #home {
-  height: 100vh;
+  height: 95vh;
   width: 100vw;
+  padding-bottom: 5vh;
   position: relative;
   background-color: $orange;
   color: white;
@@ -16,6 +17,9 @@
     text-align: center;
   }
 
+  .header-img-container {
+    padding-right: 0;
+  }
   header {
     background-color: transparent;
     box-shadow: none;

@@ -19,6 +19,10 @@ header {
     left: 0;
     cursor: pointer;
   }
+  .header-img-container {
+    z-index: 1000;
+    padding-right: 100px;
+  }
   a.header-img-container--home {
     position: static;
     max-width: 80vw;

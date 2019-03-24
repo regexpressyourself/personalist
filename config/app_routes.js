@@ -41,7 +41,6 @@ module.exports = (app) => {
 
   app.get('/playlists', (req, res) => {
 
-    app.use(cors());
     spotifyApi.getUserPlaylists(req.query.user, {}, (err, data) => {
       if (data !== undefined) {
         res.send(JSON.stringify(data.body));
@@ -60,7 +59,6 @@ module.exports = (app) => {
   });
 
   app.get('/playlist', (req, res) => {
-    app.use(cors());
     let songList = {items: []};
 
     spotifyApi.getPlaylistTracks(req.query.user, req.query.list, {}, (err, data) => {
@@ -91,7 +89,6 @@ module.exports = (app) => {
 
 
   app.post('/playlist', (req, res) => {
-    app.use(cors());
 
     let songs = req.body;
     for (let song of songs) {
@@ -100,27 +97,9 @@ module.exports = (app) => {
     res.send();
   });
 
-  app.get('/', (req, res) => {
-    app.use('/', express.static('public'));
-    app.use('/images', express.static('public/static/images'));
-    app.use('/css', express.static('public/static/css'));
-    app.use('/js', express.static('public/static/js'));
-    res.sendFile(path.join(__dirname, '../public/index.html'));
-  });
-  app.get('/lists', (req, res) => {
-    app.use('/', express.static('public'));
-    app.use('/images', express.static('public/static/images'));
-    app.use('/css', express.static('public/static/css'));
-    app.use('/js', express.static('public/static/js'));
-    res.sendFile(path.join(__dirname, '../public/index.html'));
-  });
-  app.get('/songs', (req, res) => {
-    app.use('/', express.static('public'));
-    app.use('/images', express.static('public/static/images'));
-    app.use('/css', express.static('public/static/css'));
-    app.use('/js', express.static('public/static/js'));
-    res.sendFile(path.join(__dirname, '../public/index.html'));
-  });
+  app.use('/images', express.static('client/src/static/images'));
+  app.use('/css', express.static('client/src/static/css'));
+  app.use('/js', express.static('client/src/static/js'));
 
 };
 
