@@ -16,11 +16,13 @@ function Songs(props) {
   const [playlistSongs, setPlaylistSongs] = useState(false)
   const [playlistSongView, setPlaylistSongView] = useState(false)
 
+  const urlPrefix = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '';
+
   useEffect(() => {
     // get the playlists on load
     // if no playlist is in state, redirect to the home page
     if (!chosenPlaylist) {window.location.href = '/'; return;}
-    axios.get(`/api/playlist?user=${username}&list=${chosenPlaylist.id}`)
+    axios.get(`${urlPrefix}/api/playlist?user=${username}&list=${chosenPlaylist.id}`)
       .then((response) => {
         setPlaylistSongs(response.data.items);
       })

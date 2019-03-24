@@ -80,12 +80,14 @@ function Song(props) {
 }
 
 function updateSong(id, newDescription) {
+  const urlPrefix = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '';
+
   // post the new song description to Node for storage
   let payload = [{
     'id': id,
     'description': newDescription
   }];
-  axios.post('/api/playlist', payload)
+  axios.post(`${urlPrefix}/api/playlist`, payload)
     .then((response) => {
       let saveConfirmation = document.querySelector('.save-confirmation');
       saveConfirmation.classList.add('save-confirmation--on');

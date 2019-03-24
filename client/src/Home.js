@@ -9,6 +9,7 @@ function Home() {
   const [usernameReady, setUsernameReady] = useState(false);
   const [errorMsg, setErrorMsg] = useState('none');
 
+  const urlPrefix = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '';
   const handleKeyPress = (e) => {
     if (e === true || e.key === 'Enter') {
       setUsernameReady(true);
@@ -31,7 +32,7 @@ function Home() {
     setUsername(currentUsername);
 
     // get the current user's playlists
-    axios.get(`/api/playlists?user=${currentUsername}`)
+    axios.get(`${urlPrefix}/api/playlists?user=${currentUsername}`)
       .then((response) => {
         if (response.data.name !== 'WebapiError') {
           // store the username and playlists for parsing after refresh
