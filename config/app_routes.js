@@ -1,15 +1,12 @@
 const path = require('path');
 const express = require('express');
 const request = require("request");
-const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
 var SpotifyWebApi = require('spotify-web-api-node');
 const adapter = new FileSync('db.json')
-const db = low(adapter)
+const mongo = require('mongodb').MongoClient
+const mongoUrl = 'mongodb://localhost:27017'
 require('dotenv').config()
-
-db.defaults({ playlistsongs: {} }).write()
-
 
 let spotifyApi;
 let getCreds = () => {
@@ -35,83 +32,98 @@ getCreds();
 let errCount = 0;
 
 module.exports = (app) => {
+  mongo.connect(mongoUrl, (err, client) => {
+    const db = client.db('personalist')
+    const collection = db.collection('songs')
 
+    app.get('/api/playlists', (req, res) => {
 
-  app.get('/api/playlists', (req, res) => {
-
-    spotifyApi.getUserPlaylists(req.query.user, {}, (err, data) => {
-      if (data !== undefined) {
-        res.send(JSON.stringify(data.body));
-        errCount = 0;
-        return;
-      }
-      else if (err) {
-        errCount++;
-        if (errCount < 5 ) {
-          getCreds();
-          res.send(err);
+      spotifyApi.getUserPlaylists(req.query.user, {}, (err, data) => {
+        if (data !== undefined) {
+          res.send(JSON.stringify(data.body));
+          errCount = 0;
+          return;
         }
-        else {return;}
-      }
+        else if (err) {
+          errCount++;
+          if (errCount < 5 ) {
+            getCreds();
+            res.send(err);
+          }
+          else {return;}
+        }
+      });
     });
-  });
 
-  app.get('/api/playlist', (req, res) => {
-    let songList = {items: []};
+    app.get('/api/playlist', (req, res) => {
 
-    spotifyApi.getPlaylistTracks(req.query.user, req.query.list, {}, (err, data) => {
-      if (data == undefined) {return;}
-      let i = 0;
-      for (let song of data.body.items) {
+      spotifyApi.getPlaylistTracks(req.query.user, req.query.list, {}, (err, data) => {
+        if (data == undefined) {return;}
+        let i = 0;
+        promiseArray = [];
+        for (let song of data.body.items) {
 
-        song = song.track;
-        let id = req.query.list + song.id;
-        let dbValue = db.get(id).value();
+          song = song.track;
+          let id = req.query.list + song.id;
 
-        if (typeof dbValue === 'undefined') {
-          song['description'] = '';
-          db.set(id, song['description']).write();
+          let promise = new Promise((resolve, reject) => {
+            collection.findOne({id: id})
+            .then(item => {
+              if (item === null) {
+                song['description'] = '';
+                collection.insertOne({id: song['id'], description: song['description']}, (err, result) => {
+                  if (err) {console.log(err);}
+                })
+              }
+              else {
+                song['description'] = item.description;
+              }
+              song['messinaId'] = id;
+              resolve(song);
+            })
+            .catch(err => {
+              console.error(err)
+            });
+          });
+          promiseArray.push(promise);
+
         }
-        else {
-          song['description'] = dbValue;
-        }
+        Promise.all(promiseArray)
+          .then(values => {
+            res.send(JSON.stringify(values));
+          });
 
-        song['messinaId'] = id;
-        songList.items.push(song);
-      }
-
-      res.send(JSON.stringify(songList));
-
+      });
     });
-  });
 
 
-  app.post('/api/playlist', (req, res) => {
+    app.post('/api/playlist', (req, res) => {
 
-    let songs = req.body;
-    for (let song of songs) {
-      db.set(song['id'], song['description']).write();
+      let songs = req.body;
+      for (let song of songs) {
+        collection.updateOne({id: song['id']}, {$set: {'description':song['description']}}, {upsert: true});
+      }
+      res.send();
+    });
+
+    if (process.env.ENVIRONMENT !== 'dev') {
+      app.use(express.static(path.join(__dirname, '/../client/build')));
+
+      app.get('*', (req,res) =>{
+        res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+      });
+      app.get('/playlists', (req,res) =>{
+        res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+      });
+      app.get('/songs', (req,res) =>{
+        res.sendFile(path.join(__dirname+'/../client/build/index.html'));
+      });
     }
-    res.send();
+
+    app.use('/images', express.static('client/src/static/images'));
+    app.use('/css', express.static('client/src/static/css'));
+    app.use('/js', express.static('client/src/static/js'));
+
   });
-
-  if (process.env.ENVIRONMENT !== 'dev') {
-    app.use(express.static(path.join(__dirname, '/../client/build')));
-
-    app.get('*', (req,res) =>{
-      res.sendFile(path.join(__dirname+'/../client/build/index.html'));
-    });
-    app.get('/playlists', (req,res) =>{
-      res.sendFile(path.join(__dirname+'/../client/build/index.html'));
-    });
-    app.get('/songs', (req,res) =>{
-      res.sendFile(path.join(__dirname+'/../client/build/index.html'));
-    });
-  }
-
-  app.use('/images', express.static('client/src/static/images'));
-  app.use('/css', express.static('client/src/static/css'));
-  app.use('/js', express.static('client/src/static/js'));
-
 };
 
