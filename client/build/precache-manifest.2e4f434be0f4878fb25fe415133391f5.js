@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "b2312fca1e81956b7deb",
+    "revision": "8b03716eb76e9b227aae",
     "url": "/static/css/main.77d4bb9e.chunk.css"
   },
   {
-    "revision": "b2312fca1e81956b7deb",
-    "url": "/static/js/main.cd63c82b.chunk.js"
+    "revision": "8b03716eb76e9b227aae",
+    "url": "/static/js/main.52261e45.chunk.js"
   },
   {
     "revision": "42ac5946195a7306e2a5",
@@ -24,7 +24,7 @@ self.__precacheManifest = [
     "url": "/static/media/personalist-white.91d10d56.png"
   },
   {
-    "revision": "dcb1e9df56df562253cb5b65ab5807c8",
+    "revision": "15e58cb4c5ea4b0ef4105fc961bfde6d",
     "url": "/index.html"
   }
 ];
