@@ -24,7 +24,7 @@ function Songs(props) {
     if (!chosenPlaylist) {window.location.href = '/'; return;}
     axios.get(`${urlPrefix}/api/playlist?user=${username}&list=${chosenPlaylist.id}`)
       .then((response) => {
-        setPlaylistSongs(response.data.items);
+        setPlaylistSongs(response.data);
       })
       .catch((error) => {
         console.log(error);

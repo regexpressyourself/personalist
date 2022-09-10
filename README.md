@@ -39,6 +39,8 @@ Add comments to your Spotify playlists
 
   The environment can be ommited if running a production build (detailed below).
 
+  Finally, you will need a MongoDB instance running.
+
 ### Development 
 
   ```
@@ -66,7 +68,7 @@ Add comments to your Spotify playlists
 
 ## Tech
 
-Node and Express handle the back end. I'm currently using [lowdb](https://github.com/typicode/lowdb) for a database, which is essentially just a json file.
+Node and Express handle the back end. Data is saved in a MongoDB database.
 
 The front end started in plain HTML/CSS/JS, which you can see at [this commit](https://github.com/regexpressyourself/personalist/tree/7abedc411dad50878ec06b2a440a9dd66a01607d). 
 

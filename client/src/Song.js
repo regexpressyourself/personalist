@@ -81,6 +81,7 @@ function Song(props) {
 
 function updateSong(id, newDescription) {
   const urlPrefix = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : '';
+  // TODO update localstorage too
 
   // post the new song description to Node for storage
   let payload = [{
@@ -94,10 +95,11 @@ function updateSong(id, newDescription) {
       setTimeout(() => {
         saveConfirmation.classList.remove('save-confirmation--on');
       }, 3000);
-      return;
+      return true;
     })
     .catch((error) => {
       console.log(error);
+      return false;
     });
 }
 export default Song;
